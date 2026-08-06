@@ -1,0 +1,1252 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elis shop — Маркетплейс игровых донатов</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --surface-card: #334155;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #10b981;
+            --danger: #ef4444;
+            --border: #334155;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.6rem;
+            font-weight: 800;
+            cursor: pointer;
+            letter-spacing: 0.5px;
+            background: linear-gradient(135deg, #6366f1 0%, #ec4899 50%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: colorShift 6s ease infinite;
+            background-size: 200% 200%;
+        }
+
+        @keyframes colorShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            cursor: pointer;
+            transition: color 0.2s;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .nav-link img {
+            width: 16px;
+            height: 16px;
+            object-fit: contain;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--text);
+        }
+
+        .user-panel {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--surface-card);
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+        }
+        .btn-danger:hover {
+            background-color: #dc2626;
+        }
+
+        main {
+            flex: 1;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .search-banner {
+            background: linear-gradient(135deg, #3730a3 0%, #1e1b4b 100%);
+            padding: 2.5rem;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .search-banner h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .search-box {
+            display: flex;
+            max-width: 600px;
+            margin: 0 auto;
+            gap: 0.5rem;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: white;
+            outline: none;
+        }
+
+        .categories {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+
+        .category-chip {
+            background-color: var(--surface);
+            border: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            cursor: pointer;
+            white-space: nowrap;
+            color: var(--text-muted);
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .category-chip img {
+            width: 16px;
+            height: 16px;
+            object-fit: contain;
+        }
+
+        .category-chip:hover, .category-chip.active {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .product-card {
+            background-color: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+
+        .product-img {
+            height: 140px;
+            background-color: var(--surface-card);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: var(--text-muted);
+            position: relative;
+        }
+
+        .product-img img {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+        }
+
+        .product-content {
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .product-category {
+            font-size: 0.75rem;
+            color: var(--primary);
+            text-transform: uppercase;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .product-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-price {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-top: auto;
+            margin-bottom: 1rem;
+        }
+
+        /* Модальные окна */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(0,0,0,0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            width: 100%;
+            max-width: 480px;
+            padding: 2rem;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: white;
+            outline: none;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .cart-total {
+            margin-top: 1rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .badge {
+            background: var(--surface-card);
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.8rem;
+        }
+
+        .verified-badge {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            background-image: url('https://upload.wikimedia.org/wikipedia/commons/e/e4/Twitter_Verified_Badge.svg');
+            background-size: contain;
+            background-repeat: no-repeat;
+            margin-left: 4px;
+            vertical-align: middle;
+        }
+
+        .alert {
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+        .alert-success { background: rgba(16, 185, 129, 0.2); color: var(--accent); border: 1px solid var(--accent); }
+        .alert-error { background: rgba(239, 68, 68, 0.2); color: var(--danger); border: 1px solid var(--danger); }
+
+        .gateway-container {
+            padding: 1.5rem;
+            background: #111827;
+            border-radius: 0.5rem;
+            border: 1px solid #374151;
+        }
+        .gateway-paymo { border-top: 4px solid #3b82f6; }
+        .gateway-cryptopay { border-top: 4px solid #f59e0b; }
+        .gateway-fastpay { border-top: 4px solid #10b981; }
+
+        .hidden { display: none !important; }
+
+        /* Мобильная адаптивность (Media Queries) */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 0.75rem 1rem;
+            }
+            .mobile-menu-btn {
+                display: block;
+            }
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background-color: var(--surface);
+                border-bottom: 1px solid var(--border);
+                padding: 1rem;
+                gap: 1rem;
+                box-shadow: 0 10px 15px rgba(0,0,0,0.5);
+            }
+            .nav-links.active {
+                display: flex;
+            }
+            .search-banner {
+                padding: 1.5rem 1rem;
+            }
+            .search-banner h1 {
+                font-size: 1.5rem;
+            }
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                gap: 1rem;
+            }
+            .product-img {
+                height: 110px;
+            }
+            .product-content {
+                padding: 0.75rem;
+            }
+            .modal-content {
+                padding: 1.25rem;
+                max-width: 95%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo" onclick="switchTab('catalog')">Elis shop</div>
+        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+        <div class="nav-links" id="nav-links">
+            <a class="nav-link active" onclick="switchTab('catalog'); closeMobileMenu()">
+                <img src="https://cdn-icons-png.flaticon.com/512/2636/2636428.png" alt="icon">
+                Каталог
+            </a>
+            <a class="nav-link" onclick="openCartModal(); closeMobileMenu()">
+                <img src="https://cdn-icons-png.flaticon.com/512/1170/1170678.png" alt="icon">
+                Корзина (<span id="cart-count">0</span>)
+            </a>
+            <a class="nav-link" onclick="switchTab('reviews'); closeMobileMenu()">
+                <img src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png" alt="icon">
+                Отзывы
+            </a>
+            <a class="nav-link" onclick="switchTab('orders'); closeMobileMenu()">
+                <img src="https://cdn-icons-png.flaticon.com/512/891/891462.png" alt="icon">
+                Мои заказы
+            </a>
+        </div>
+        <div class="user-panel" id="user-panel">
+            <!-- Динамически заполняется JS -->
+        </div>
+    </header>
+
+    <main>
+        <!-- СТРАНИЦА КАТАЛОГА -->
+        <div id="tab-catalog" class="tab-content">
+            <div class="search-banner">
+                <h1>Мгновенный донат в любимые игры</h1>
+                <div class="search-box">
+                    <input type="text" id="search-input" placeholder="Введите название игры или товара..." oninput="filterProducts()">
+                    <button class="btn" onclick="filterProducts()">Найти</button>
+                </div>
+            </div>
+
+            <div class="categories" id="categories-container">
+                <div class="category-chip active" onclick="selectCategory('all', this)">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2636/2636428.png" alt="icon"> Все товары
+                </div>
+                <div class="category-chip" onclick="selectCategory('Brawl Stars', this)">
+                    <img src="https://cdn-icons-png.flaticon.com/512/815/815571.png" alt="icon"> Brawl Stars
+                </div>
+                <div class="category-chip" onclick="selectCategory('Genshin Impact', this)">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3408/3408506.png" alt="icon"> Genshin Impact
+                </div>
+                <div class="category-chip" onclick="selectCategory('Roblox', this)">
+                    <img src="https://cdn-icons-png.flaticon.com/512/10662/10662312.png" alt="icon"> Roblox
+                </div>
+                <div class="category-chip" onclick="selectCategory('Steam', this)">
+                    <img src="https://cdn-icons-png.flaticon.com/512/226/226777.png" alt="icon"> Steam (Кошелёк)
+                </div>
+                <div class="category-chip" onclick="selectCategory('Valorant', this)">
+                    <img src="https://cdn-icons-png.flaticon.com/512/6125/6125014.png" alt="icon"> Valorant
+                </div>
+            </div>
+
+            <div class="products-grid" id="products-grid">
+                <!-- Товары рендерятся через JS -->
+            </div>
+        </div>
+
+        <!-- СТРАНИЦА ОТЗЫВОВ -->
+        <div id="tab-reviews" class="tab-content hidden">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <h2>Отзывы покупателей</h2>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Средняя оценка: 4.9 из 5 (на основе более 1,420 заказов)</p>
+                </div>
+                <button class="btn" onclick="openReviewModal()">Оставить отзыв</button>
+            </div>
+            <div id="reviews-container">
+                <!-- Отзывы -->
+            </div>
+        </div>
+
+        <!-- СТРАНИЦА ЗАКАЗОВ -->
+        <div id="tab-orders" class="tab-content hidden">
+            <h2 style="margin-bottom: 1.5rem;">История ваших заказов</h2>
+            <div id="orders-container">
+                <!-- Заказы рендерятся через JS -->
+            </div>
+        </div>
+
+        <!-- СТРАНИЦА ПРОФИЛЯ -->
+        <div id="tab-profile" class="tab-content hidden">
+            <h2 style="margin-bottom: 1.5rem;">Личный кабинет</h2>
+            <div style="background: var(--surface); padding: 2rem; border-radius: 0.75rem; border: 1px solid var(--border); max-width: 500px; width: 100%;">
+                <div class="form-group">
+                    <label>Email аккаунта</label>
+                    <input type="text" id="profile-email" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Баланс кошелька</label>
+                    <div style="font-size: 1.5rem; font-weight: bold; color: var(--accent); margin-bottom: 0.5rem;" id="profile-balance">0 ₽</div>
+                    <button class="btn btn-outline" onclick="topUpBalance()">Пополнить баланс (+1000 ₽)</button>
+                </div>
+                <hr style="border-color: var(--border); margin: 1.5rem 0;">
+                <button class="btn btn-danger" onclick="logout()">Выйти из аккаунта</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- МОДАЛЬНОЕ ОКНО ТОВАРА -->
+    <div class="modal" id="product-modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('product-modal')">&times;</button>
+            <div id="modal-product-details"></div>
+        </div>
+    </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО ОСТАВИТЬ ОТЗЫВ (ОБЩЕЕ) -->
+    <div class="modal" id="review-modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('review-modal')">&times;</button>
+            <h2>Новый отзыв</h2>
+            <div class="form-group" style="margin-top: 1rem;">
+                <label>Ваше имя / ник</label>
+                <input type="text" id="review-name" placeholder="Иван">
+            </div>
+            <div class="form-group">
+                <label>Оценка</label>
+                <select id="review-rating">
+                    <option value="5">⭐⭐⭐⭐⭐ (5/5)</option>
+                    <option value="4">⭐⭐⭐⭐ (4/5)</option>
+                    <option value="3">⭐⭐⭐ (3/5)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Текст отзыва</label>
+                <input type="text" id="review-text" placeholder="Быстрая доставка, всё супер!">
+            </div>
+            <button class="btn" style="width: 100%;" onclick="submitReview()">Опубликовать</button>
+        </div>
+    </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО ОТЗЫВА К КОНКРЕТНОМУ ЗАКАЗУ -->
+    <div class="modal" id="order-review-modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('order-review-modal')">&times;</button>
+            <h2>Оставить отзыв о товаре</h2>
+            <input type="hidden" id="order-review-item-id">
+            <input type="hidden" id="order-review-order-index">
+            <div class="form-group" style="margin-top: 1rem;">
+                <label>Оценка</label>
+                <select id="order-review-rating">
+                    <option value="5">⭐⭐⭐⭐⭐ (5/5)</option>
+                    <option value="4">⭐⭐⭐⭐ (4/5)</option>
+                    <option value="3">⭐⭐⭐ (3/5)</option>
+                    <option value="2">⭐⭐ (2/5)</option>
+                    <option value="1">⭐ (1/5)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Ваш отзыв</label>
+                <input type="text" id="order-review-text" placeholder="Товар пришел быстро, продавец Элис топ!">
+            </div>
+            <button class="btn" style="width: 100%;" onclick="submitOrderReview()">Отправить отзыв</button>
+        </div>
+    </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО КОРЗИНЫ -->
+    <div class="modal" id="cart-modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('cart-modal')">&times;</button>
+            <h2>Корзина покупок</h2>
+            <div id="cart-items-container" style="max-height: 250px; overflow-y: auto; margin-top: 1rem;">
+                <!-- Элементы корзины -->
+            </div>
+            <div class="cart-total">
+                <span>Итого:</span>
+                <span id="cart-total-price">0 ₽</span>
+            </div>
+            <button class="btn" style="width: 100%; margin-top: 1.5rem;" onclick="openPaymentGatewayModal()">Перейти к оплате</button>
+        </div>
+    </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО ВЫБОРА И ИНТЕРФЕЙСОВ ПЛАТЕЖНЫХ СИСТЕМ -->
+    <div class="modal" id="payment-gateway-modal">
+        <div class="modal-content" style="max-width: 550px;">
+            <button class="close-btn" onclick="closeModal('payment-gateway-modal')">&times;</button>
+            <h2>Выберите способ оплаты</h2>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Каждая система имеет свой уникальный платежный интерфейс:</p>
+            
+            <div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+                <button class="btn btn-outline" id="gw-btn-1" onclick="switchGateway('paymo')">PayMo Secure</button>
+                <button class="btn btn-outline" id="gw-btn-2" onclick="switchGateway('cryptopay')">CryptoVault</button>
+                <button class="btn btn-outline" id="gw-btn-3" onclick="switchGateway('fastpay')">FastPay Express</button>
+            </div>
+
+            <div id="gateway-interface-container">
+                <!-- Интерфейс выбранного шлюза -->
+            </div>
+        </div>
+    </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО ПОДТВЕРЖДЕНИЯ (СТАТУСА) ОПЛАТЫ ЗАКАЗА -->
+    <div class="modal" id="order-success-modal">
+        <div class="modal-content" style="text-align: center; padding: 2.5rem 2rem;">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">🎉</div>
+            <h2 style="color: var(--accent); margin-bottom: 0.5rem;">Заказ успешно оформлен!</h2>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem;" id="success-modal-text">Перейдите в «Мои заказы», чтобы подтвердить получение и оставить отзыв.</p>
+            <button class="btn" style="width: 100%;" onclick="closeModal('order-success-modal'); switchTab('orders');">Перейти в Мои заказы</button>
+        </div>
+    </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО АВТОРИЗАЦИИ / РЕГИСТРАЦИИ -->
+    <div class="modal" id="auth-modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('auth-modal')">&times;</button>
+            <h2 id="auth-title" style="margin-bottom: 1.5rem;">Вход в Elis shop</h2>
+            
+            <div id="auth-alert" class="hidden"></div>
+
+            <div id="auth-step-1">
+                <div class="form-group">
+                    <label>Ваш Email</label>
+                    <input type="email" id="auth-email" placeholder="example@mail.com">
+                </div>
+                <div class="form-group">
+                    <label>Пароль</label>
+                    <input type="password" id="auth-password" placeholder="••••••••">
+                </div>
+                <button class="btn" style="width: 100%; margin-bottom: 1rem;" onclick="handleAuthSubmit()">Продолжить</button>
+                <p style="text-align: center; font-size: 0.9rem; color: var(--text-muted); cursor: pointer;" onclick="toggleAuthMode()">
+                    <span id="auth-switch-text">Нет аккаунта? Зарегистрироваться</span>
+                </p>
+            </div>
+
+            <div id="auth-step-2" class="hidden">
+                <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem;">
+                    Мы отправили код подтверждения на ваш email. (Для демонстрации код показан ниже):
+                </p>
+                <div id="simulated-mail-box" style="background: var(--bg); padding: 1rem; border-radius: 0.5rem; border: 1px dashed var(--primary); margin-bottom: 1rem; text-align: center;">
+                    Входящее письмо от Elis shop:<br>
+                    <strong>Ваш код подтверждения: <span id="displayed-code" style="color: var(--accent); font-size: 1.2rem;">0000</span></strong>
+                </div>
+                <div class="form-group">
+                    <label>Введите 4-значный код</label>
+                    <input type="text" id="auth-code-input" maxlength="4" placeholder="1234">
+                </div>
+                <button class="btn" style="width: 100%;" onclick="verifyCodeAndRegister()">Подтвердить и войти</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const products = [
+            { id: 1, name: "Brawl Pass Plus", category: "Brawl Stars", price: 599, icon: "https://cdn-icons-png.flaticon.com/512/815/815571.png", desc: "Официальный Brawl Pass Plus с мгновенной доставкой по тегу игрока." },
+            { id: 2, name: "170 Гемов Brawl Stars", category: "Brawl Stars", price: 349, icon: "https://cdn-icons-png.flaticon.com/512/815/815571.png", desc: "Набор кристалов для покупки скинов и ящиков." },
+            { id: 3, name: "Луна в Genshin Impact", category: "Genshin Impact", price: 449, icon: "https://cdn-icons-png.flaticon.com/512/3408/3408506.png", desc: "Благословение полой луны на 30 дней (300 кристаллов созидания + по 90 камней истока ежедневно)." },
+            { id: 4, name: "980 Кристаллов созидания", category: "Genshin Impact", price: 990, icon: "https://cdn-icons-png.flaticon.com/512/3408/3408506.png", desc: "Прямое пополнение кристаллов созидания в Genshin Impact." },
+            { id: 5, name: "Robux 400 R$", category: "Roblox", price: 390, icon: "https://cdn-icons-png.flaticon.com/512/10662/10662312.png", desc: "Подарочная карта или покупка Робуксов через Gamepass." },
+            { id: 6, name: "Robux 800 R$", category: "Roblox", price: 720, icon: "https://cdn-icons-png.flaticon.com/512/10662/10662312.png", desc: "Популярный набор робуксов для кастомизации аватара." },
+            { id: 7, name: "Пополнение Steam (РФ)", category: "Steam", price: 500, icon: "https://cdn-icons-png.flaticon.com/512/226/226777.png", desc: "Пополнение баланса Steam кошелька в рублях без комиссий." },
+            { id: 8, name: "Valorant Points 1000 VP", category: "Valorant", price: 850, icon: "https://cdn-icons-png.flaticon.com/512/6125/6125014.png", desc: "Код пополнения Valorant Points для покупки скинов в Riot Games." },
+            { id: 9, name: "ELIS Prime BS Account #1", category: "Brawl Stars", price: 2490, icon: "https://cdn-icons-png.flaticon.com/512/815/815571.png", desc: "Прокачанный премиум аккаунт с редкими скинами (Шелли Звездная, Меха Леон), почта меняется моментально." },
+            { id: 10, name: "ELIS Genshin Whale Account", category: "Genshin Impact", price: 4990, icon: "https://cdn-icons-png.flaticon.com/512/3408/3408506.png", desc: "Топ премиум персонажи с сигнами (Райдэн C3, Е Лань C1, Ху Тао), полностью чистый аккаунт." },
+            { id: 11, name: "ELIS Roblox OG Account", category: "Roblox", price: 1890, icon: "https://cdn-icons-png.flaticon.com/512/10662/10662312.png", desc: "Много донатных шмоток, куча робуксов в истории трат, безопасная сделка." }
+        ];
+
+        let productReviews = JSON.parse(localStorage.getItem('elis_product_reviews')) || {
+            1: [
+                { name: "Алексей", rating: 5, text: "Купил Brawl Pass, прилетел за 2 минуты!", date: "05.08.2026" }
+            ],
+            3: [
+                { name: "София", rating: 5, text: "Брала луну у продавца Элис, всё честно, быстрая доставка.", date: "04.08.2026" }
+            ]
+        };
+
+        let reviews = JSON.parse(localStorage.getItem('elis_reviews')) || [
+            { name: "Алексей", rating: 5, text: "Купил Brawl Pass, прилетел за 2 минуты! Отличный магазин.", date: "05.08.2026" },
+            { name: "София", rating: 5, text: "Брала товар у продавца Элис, всё честно, быстрая доставка. Сервис супер!", date: "04.08.2026" }
+        ];
+
+        let currentUser = JSON.parse(localStorage.getItem('elis_user')) || null;
+        let cart = JSON.parse(localStorage.getItem('elis_cart')) || [];
+        let orders = JSON.parse(localStorage.getItem('elis_orders')) || [];
+        let currentCategory = 'all';
+        let isRegistering = false;
+        let generatedVerificationCode = "";
+        let tempUserData = null;
+        let activeGateway = 'paymo';
+
+        window.onload = function() {
+            renderUserPanel();
+            renderProducts();
+            renderReviews();
+            updateCartCount();
+            renderOrders();
+        };
+
+        function toggleMobileMenu() {
+            const navLinks = document.getElementById('nav-links');
+            navLinks.classList.toggle('active');
+        }
+
+        function closeMobileMenu() {
+            const navLinks = document.getElementById('nav-links');
+            navLinks.classList.remove('active');
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            
+            document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+            if(event && event.currentTarget && event.currentTarget.classList.contains('nav-link')) {
+                event.currentTarget.classList.add('active');
+            }
+            
+            if(tabId === 'profile' && !currentUser) {
+                openAuthModal();
+            }
+        }
+
+        function renderUserPanel() {
+            const panel = document.getElementById('user-panel');
+            if (currentUser) {
+                panel.innerHTML = `
+                    <button class="btn btn-outline" onclick="switchTab('profile')">👤 Кабинет (${currentUser.balance} ₽)</button>
+                `;
+            } else {
+                panel.innerHTML = `
+                    <button class="btn" onclick="openAuthModal()">Войти</button>
+                `;
+            }
+        }
+
+        function renderProducts(filteredList = products) {
+            const grid = document.getElementById('products-grid');
+            grid.innerHTML = '';
+
+            if(filteredList.length === 0) {
+                grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted);">Товары не найдены</p>';
+                return;
+            }
+
+            filteredList.forEach(p => {
+                grid.innerHTML += `
+                    <div class="product-card">
+                        <div class="product-img">
+                            <img src="${p.icon}" alt="icon" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2636/2636428.png'">
+                        </div>
+                        <div class="product-content">
+                            <span class="product-category">${p.category}</span>
+                            <div class="product-title">${p.name}</div>
+                            <div class="product-price">${p.price} ₽</div>
+                            <button class="btn" onclick="openProductModal(${p.id})">Подробнее</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function renderReviews() {
+            const container = document.getElementById('reviews-container');
+            container.innerHTML = '';
+            reviews.forEach(rev => {
+                let stars = '⭐'.repeat(rev.rating);
+                container.innerHTML += `
+                    <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; flex-wrap: wrap;">
+                            <strong>${rev.name} <span class="verified-badge"></span></strong>
+                            <span style="color: var(--text-muted); font-size: 0.85rem;">${rev.date}</span>
+                        </div>
+                        <div style="margin-bottom: 0.5rem; font-size: 0.9rem;">${stars}</div>
+                        <p style="color: var(--text); font-size: 0.95rem;">${rev.text}</p>
+                    </div>
+                `;
+            });
+        }
+
+        function selectCategory(category, element) {
+            currentCategory = category;
+            document.querySelectorAll('.category-chip').forEach(chip => chip.classList.remove('active'));
+            element.classList.add('active');
+            filterProducts();
+        }
+
+        function filterProducts() {
+            const query = document.getElementById('search-input').value.toLowerCase();
+            let result = products;
+
+            if (currentCategory !== 'all') {
+                result = result.filter(p => p.category === currentCategory);
+            }
+
+            if (query) {
+                result = result.filter(p => p.name.toLowerCase().includes(query) || p.category.toLowerCase().includes(query));
+            }
+
+            renderProducts(result);
+        }
+
+        function openProductModal(id) {
+            const product = products.find(p => p.id === id);
+            const container = document.getElementById('modal-product-details');
+            
+            // Собираем отзывы конкретно для этого товара
+            let pReviewsHTML = '';
+            const specificReviews = productReviews[id] || [];
+            if(specificReviews.length === 0) {
+                pReviewsHTML = '<div style="font-size: 0.85rem; color: var(--text-muted);">У этого товара пока нет отзывов. Станьте первым после покупки!</div>';
+            } else {
+                specificReviews.forEach(r => {
+                    let stars = '⭐'.repeat(r.rating);
+                    pReviewsHTML += `
+                        <div style="font-size: 0.85rem; border-bottom: 1px solid var(--border); padding-bottom: 0.4rem; margin-bottom: 0.4rem;">
+                            <div>${stars} <strong>${r.name}</strong> <span style="float: right; color: var(--text-muted);">${r.date}</span></div>
+                            <div style="color: var(--text);">${r.text}</div>
+                        </div>
+                    `;
+                });
+            }
+
+            container.innerHTML = `
+                <div style="font-size: 3rem; text-align: center; margin-bottom: 1rem;">
+                    <img src="${product.icon}" width="60" height="60" style="object-fit: contain;">
+                </div>
+                <span class="product-category">${product.category}</span>
+                <h2>${product.name}</h2>
+                <div style="background: var(--bg); padding: 0.75rem 1rem; border-radius: 0.5rem; margin: 1rem 0; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <span style="font-size: 0.85rem; color: var(--text-muted); display: block;">Продавец</span>
+                        <strong>Элис</strong> <span class="verified-badge"></span>
+                    </div>
+                    <div style="text-align: right;">
+                        <span style="font-size: 0.85rem; color: var(--text-muted); display: block;">Рейтинг</span>
+                        <span style="color: #f59e0b;">⭐⭐⭐⭐⭐ (5.0)</span>
+                    </div>
+                </div>
+                <p style="color: var(--text-muted); margin: 1rem 0;">${product.desc}</p>
+                <div class="form-group">
+                    <label>Игровой ID / Никнейм / Данные</label>
+                    <input type="text" id="game-credentials" placeholder="Например: #8Y2PL9Q">
+                </div>
+                <div style="background: var(--surface-card); border-radius: 0.5rem; padding: 1rem; margin-top: 1rem; max-height: 150px; overflow-y: auto;">
+                    <strong style="font-size: 0.9rem; display: block; margin-bottom: 0.5rem;">Отзывы об этом товаре:</strong>
+                    ${pReviewsHTML}
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+                    <span style="font-size: 1.5rem; font-weight: bold; color: var(--accent);">${product.price} ₽</span>
+                    <button class="btn" onclick="addToCart(${product.id})">В корзину</button>
+                </div>
+            `;
+            document.getElementById('product-modal').classList.add('active');
+        }
+
+        function addToCart(productId) {
+            const credsInput = document.getElementById('game-credentials');
+            const credentials = credsInput ? credsInput.value.trim() : '';
+
+            if(!credentials) {
+                alert('Пожалуйста, введите игровой ID или данные аккаунта!');
+                return;
+            }
+
+            const product = products.find(p => p.id === productId);
+            cart.push({ ...product, credentials, cartId: Date.now() });
+            saveCart();
+            updateCartCount();
+            closeModal('product-modal');
+            alert('Товар добавлен в корзину!');
+        }
+
+        function saveCart() {
+            localStorage.setItem('elis_cart', JSON.stringify(cart));
+        }
+
+        function updateCartCount() {
+            document.getElementById('cart-count').innerText = cart.length;
+        }
+
+        function openCartModal() {
+            const container = document.getElementById('cart-items-container');
+            container.innerHTML = '';
+
+            if(cart.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: var(--text-muted);">Корзина пуста</p>';
+                document.getElementById('cart-total-price').innerText = '0 ₽';
+                document.getElementById('cart-modal').classList.add('active');
+                return;
+            }
+
+            let total = 0;
+            cart.forEach((item, index) => {
+                total += item.price;
+                container.innerHTML += `
+                    <div class="cart-item">
+                        <div>
+                            <strong>${item.name}</strong><br>
+                            <small style="color: var(--text-muted);">Данные: ${item.credentials}</small>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <span>${item.price} ₽</span>
+                            <button class="btn btn-danger" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;" onclick="removeFromCart(${index})">Удалить</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('cart-total-price').innerText = total + ' ₽';
+            document.getElementById('cart-modal').classList.add('active');
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            saveCart();
+            updateCartCount();
+            openCartModal();
+        }
+
+        function openPaymentGatewayModal() {
+            if(cart.length === 0) {
+                alert('Корзина пуста!');
+                return;
+            }
+            closeModal('cart-modal');
+            document.getElementById('payment-gateway-modal').classList.add('active');
+            switchGateway('paymo');
+        }
+
+        function switchGateway(gatewayName) {
+            activeGateway = gatewayName;
+            ['paymo', 'cryptopay', 'fastpay'].forEach((gw, idx) => {
+                document.getElementById(`gw-btn-${idx + 1}`).style.background = gw === gatewayName ? 'var(--primary)' : 'transparent';
+            });
+
+            const total = cart.reduce((sum, item) => sum + item.price, 0);
+            const container = document.getElementById('gateway-interface-container');
+
+            if(gatewayName === 'paymo') {
+                container.innerHTML = `
+                    <div class="gateway-container gateway-paymo">
+                        <h3 style="color: #3b82f6; margin-bottom: 0.5rem;">PayMo Secure Checkout</h3>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Безопасный платежный шлюз по банковским картам РФ и СБП.</p>
+                        <div class="form-group"><label>Номер карты</label><input type="text" placeholder="0000 0000 0000 0000" maxlength="19"></div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <div class="form-group" style="flex:1"><label>ММ/ГГ</label><input type="text" placeholder="MM/YY" maxlength="5"></div>
+                            <div class="form-group" style="flex:1"><label>CVC / CVV</label><input type="password" placeholder="123" maxlength="3"></div>
+                        </div>
+                        <button class="btn" style="width: 100%; background: #3b82f6; margin-top: 1rem;" onclick="processPayment(${total})">Оплатить ${total} ₽ через PayMo</button>
+                    </div>
+                `;
+            } else if(gatewayName === 'cryptopay') {
+                container.innerHTML = `
+                    <div class="gateway-container gateway-cryptopay">
+                        <h3 style="color: #f59e0b; margin-bottom: 0.5rem;">CryptoVault Terminal</h3>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Быстрая оплата в криптовалюте (USDT, TON, BTC).</p>
+                        <div class="form-group">
+                            <label>Выберите сеть</label>
+                            <select><option>USDT (TRC-20)</option><option>TON (The Open Network)</option><option>Bitcoin (BTC)</option></select>
+                        </div>
+                        <div style="background: #0f172a; padding: 0.75rem; border-radius: 0.5rem; text-align: center; margin-bottom: 1rem; font-size: 0.85rem; color: #f59e0b;">
+                            Сумма к переводу: <strong>~${(total/90).toFixed(2)} USDT</strong>
+                        </div>
+                        <button class="btn" style="width: 100%; background: #f59e0b; color: #000;" onclick="processPayment(${total})">Сгенерировать адрес и оплатить</button>
+                    </div>
+                `;
+            } else if(gatewayName === 'fastpay') {
+                container.innerHTML = `
+                    <div class="gateway-container gateway-fastpay">
+                        <h3 style="color: #10b981; margin-bottom: 0.5rem;">FastPay Express One-Click</h3>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Оплата со счета кошелька ELIS или мобильных операторов.</p>
+                        <div class="form-group"><label>Номер телефона / Кошелька</label><input type="text" placeholder="+7 (999) 000-00-00"></div>
+                        <button class="btn" style="width: 100%; background: #10b981;" onclick="processPayment(${total})">Подтвердить быструю оплату (${total} ₽)</button>
+                    </div>
+                `;
+            }
+        }
+
+        function processPayment(total) {
+            if(!currentUser) {
+                closeModal('payment-gateway-modal');
+                openAuthModal();
+                alert('Необходимо войти в аккаунт для завершения покупки!');
+                return;
+            }
+
+            const newOrder = {
+                id: Math.floor(100000 + Math.random() * 900000),
+                date: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                items: [...cart],
+                total: total,
+                confirmed: false // Требуется подтверждение пользователем
+            };
+
+            orders.unshift(newOrder);
+            localStorage.setItem('elis_orders', JSON.stringify(orders));
+
+            cart = [];
+            saveCart();
+            updateCartCount();
+            closeModal('payment-gateway-modal');
+            renderUserPanel();
+            renderOrders();
+
+            document.getElementById('order-success-modal').classList.add('active');
+        }
+
+        function confirmOrderDelivery(orderIndex) {
+            orders[orderIndex].confirmed = true;
+            localStorage.setItem('elis_orders', JSON.stringify(orders));
+            renderOrders();
+            alert('Заказ подтвержден!');
+        }
+
+        function openOrderReviewModal(orderIndex, itemId) {
+            document.getElementById('order-review-order-index').value = orderIndex;
+            document.getElementById('order-review-item-id').value = itemId;
+            document.getElementById('order-review-text').value = '';
+            document.getElementById('order-review-modal').classList.add('active');
+        }
+
+        function submitOrderReview() {
+            const orderIndex = parseInt(document.getElementById('order-review-order-index').value);
+            const itemId = parseInt(document.getElementById('order-review-item-id').value);
+            const rating = parseInt(document.getElementById('order-review-rating').value);
+            const text = document.getElementById('order-review-text').value.trim();
+
+            if(!text) {
+                alert('Введите текст отзыва!');
+                return;
+            }
+
+            const author = currentUser ? currentUser.email.split('@')[0] : 'Покупатель';
+            const dateStr = new Date().toLocaleDateString();
+
+            // Сохраняем в отзывы конкретного товара
+            if(!productReviews[itemId]) {
+                productReviews[itemId] = [];
+            }
+            productReviews[itemId].unshift({ name: author, rating, text, date: dateStr });
+            localStorage.setItem('elis_product_reviews', JSON.stringify(productReviews));
+
+            // Также добавляем в общий список отзывов
+            reviews.unshift({ name: author, rating, text, date: dateStr });
+            localStorage.setItem('elis_reviews', JSON.stringify(reviews));
+
+            // Помечаем в заказе, что отзыв оставлен
+            orders[orderIndex].reviewed = true;
+            localStorage.setItem('elis_orders', JSON.stringify(orders));
+
+            closeModal('order-review-modal');
+            renderOrders();
+            renderReviews();
+            alert('Спасибо! Ваш отзыв успешно добавлен на страницу товара.');
+        }
+
+        function openReviewModal() {
+            document.getElementById('review-modal').classList.add('active');
+        }
+
+        function submitReview() {
+            const name = document.getElementById('review-name').value.trim();
+            const rating = parseInt(document.getElementById('review-rating').value);
+            const text = document.getElementById('review-text').value.trim();
+
+            if(!name || !text) {
+                alert('Заполните имя и текст отзыва!');
+                return;
+            }
+
+            reviews.unshift({ name, rating, text, date: new Date().toLocaleDateString() });
+            localStorage.setItem('elis_reviews', JSON.stringify(reviews));
+            closeModal('review-modal');
+            renderReviews();
+            alert('Спасибо за ваш отзыв!');
+        }
+
+        function renderOrders() {
+            const container = document.getElementById('orders-container');
+            container.innerHTML = '';
+
+            if(orders.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-muted);">У вас пока нет заказов.</p>';
+                return;
+            }
+
+            orders.forEach((order, orderIndex) => {
+                let itemsHtml = '';
+                order.items.forEach(i => {
+                    itemsHtml += `<div style="font-size: 0.9rem; margin-top: 0.25rem;">• <strong>${i.name}</strong> (Данные: ${i.credentials})</div>`;
+                });
+
+                let actionBlock = '';
+                if (!order.confirmed) {
+                    actionBlock = `<button class="btn" style="background: var(--accent); font-size: 0.85rem; padding: 0.4rem 0.8rem;" onclick="confirmOrderDelivery(${orderIndex})">Подтвердить получение</button>`;
+                } else {
+                    if (!order.reviewed) {
+                        let firstItemId = order.items[0] ? order.items[0].id : 1;
+                        actionBlock = `
+                            <span class="badge" style="background: rgba(16, 185, 129, 0.2); color: var(--accent);">✅ Доставлен и подтвержден</span>
+                            <button class="btn btn-outline" style="font-size: 0.85rem; padding: 0.4rem 0.8rem; margin-left: 0.5rem;" onclick="openOrderReviewModal(${orderIndex}, ${firstItemId})">Написать отзыв</button>
+                        `;
+                    } else {
+                        actionBlock = `<span class="badge" style="background: rgba(16, 185, 129, 0.2); color: var(--accent);">✅ Доставлен • Отзыв оставлен</span>`;
+                    }
+                }
+
+                container.innerHTML += `
+                    <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; flex-wrap: wrap;">
+                            <strong>Заказ #${order.id}</strong>
+                            <span style="color: var(--text-muted); font-size: 0.85rem;">${order.date}</span>
+                        </div>
+                        <div style="margin-bottom: 1rem;">
+                            ${itemsHtml}
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+                            <strong style="color: var(--accent); font-size: 1.1rem;">${order.total} ₽</strong>
+                            <div>${actionBlock}</div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function openAuthModal() {
+            document.getElementById('auth-modal').classList.add('active');
+            document.getElementById('auth-step-1').classList.remove('hidden');
+            document.getElementById('auth-step-2').classList.add('hidden');
+            document.getElementById('auth-alert').classList.add('hidden');
+        }
+
+        function toggleAuthMode() {
+            isRegistering = !isRegistering;
+            document.getElementById('auth-title').innerText = isRegistering ? 'Регистрация в Elis shop' : 'Вход в Elis shop';
+            document.getElementById('auth-switch-text').innerText = isRegistering ? 'Уже есть аккаунт? Войти' : 'Нет аккаунта? Зарегистрироваться';
+        }
+
+        function handleAuthSubmit() {
+            const email = document.getElementById('auth-email').value.trim();
+            const password = document.getElementById('auth-password').value.trim();
+            const alertBox = document.getElementById('auth-alert');
+
+            if(!email || !password) {
+                showAlert(alertBox, 'Заполните все поля!', 'error');
+                return;
+            }
+
+            if(isRegistering) {
+                generatedVerificationCode = Math.floor(1000 + Math.random() * 9000).toString();
+                document.getElementById('displayed-code').innerText = generatedVerificationCode;
+                tempUserData = { email, password, balance: 500 };
+
+                document.getElementById('auth-step-1').classList.add('hidden');
+                document.getElementById('auth-step-2').classList.remove('hidden');
+            } else {
+                currentUser = { email, balance: 500 };
+                localStorage.setItem('elis_user', JSON.stringify(currentUser));
+                finalizeLogin();
+            }
+        }
+
+        function verifyCodeAndRegister() {
+            const enteredCode = document.getElementById('auth-code-input').value.trim();
+            if(enteredCode === generatedVerificationCode) {
+                currentUser = tempUserData;
+                localStorage.setItem('elis_user', JSON.stringify(currentUser));
+                finalizeLogin();
+            } else {
+                alert('Неверный код подтверждения!');
+            }
+        }
+
+        function finalizeLogin() {
+            closeModal('auth-modal');
+            renderUserPanel();
+            document.getElementById('profile-email').value = currentUser.email;
+            document.getElementById('profile-balance').innerText = currentUser.balance + ' ₽';
+            alert('Успешный вход в аккаунт!');
+        }
+
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('elis_user');
+            renderUserPanel();
+            switchTab('catalog');
+            alert('Вы вышли из аккаунта.');
+        }
+
+        function topUpBalance() {
+            if(currentUser) {
+                currentUser.balance += 1000;
+                localStorage.setItem('elis_user', JSON.stringify(currentUser));
+                document.getElementById('profile-balance').innerText = currentUser.balance + ' ₽';
+                renderUserPanel();
+                alert('Баланс успешно пополнен на 1000 ₽!');
+            }
+        }
+
+        function showAlert(element, text, type) {
+            element.innerText = text;
+            element.className = `alert alert-${type}`;
+            element.classList.remove('hidden');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+    </script>
+</body>
+</html>
