@@ -386,7 +386,7 @@
 
         .hidden { display: none !important; }
 
-        /* Мобильная адаптивность (Media Queries) */
+        /* Мобильная адаптивность */
         .mobile-menu-btn {
             display: none;
             background: none;
@@ -446,22 +446,22 @@
 
     <header>
         <div class="logo" onclick="switchTab('catalog')">Elis shop</div>
-        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+        <button class="mobile-menu-btn" aria-label="Меню" onclick="toggleMobileMenu()">☰</button>
         <div class="nav-links" id="nav-links">
             <a class="nav-link active" onclick="switchTab('catalog'); closeMobileMenu()">
-                <img src="https://cdn-icons-png.flaticon.com/512/2636/2636428.png" alt="icon">
+                <img src="https://cdn-icons-png.flaticon.com/512/2636/2636428.png" alt="Каталог">
                 Каталог
             </a>
             <a class="nav-link" onclick="openCartModal(); closeMobileMenu()">
-                <img src="https://cdn-icons-png.flaticon.com/512/1170/1170678.png" alt="icon">
+                <img src="https://cdn-icons-png.flaticon.com/512/1170/1170678.png" alt="Корзина">
                 Корзина (<span id="cart-count">0</span>)
             </a>
             <a class="nav-link" onclick="switchTab('reviews'); closeMobileMenu()">
-                <img src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png" alt="icon">
+                <img src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png" alt="Отзывы">
                 Отзывы
             </a>
             <a class="nav-link" onclick="switchTab('orders'); closeMobileMenu()">
-                <img src="https://cdn-icons-png.flaticon.com/512/891/891462.png" alt="icon">
+                <img src="https://cdn-icons-png.flaticon.com/512/891/891462.png" alt="Мои заказы">
                 Мои заказы
             </a>
         </div>
@@ -483,22 +483,22 @@
 
             <div class="categories" id="categories-container">
                 <div class="category-chip active" onclick="selectCategory('all', this)">
-                    <img src="https://cdn-icons-png.flaticon.com/512/2636/2636428.png" alt="icon"> Все товары
+                    <img src="https://cdn-icons-png.flaticon.com/512/2636/2636428.png" alt="Все"> Все товары
                 </div>
                 <div class="category-chip" onclick="selectCategory('Brawl Stars', this)">
-                    <img src="https://cdn-icons-png.flaticon.com/512/815/815571.png" alt="icon"> Brawl Stars
+                    <img src="https://cdn-icons-png.flaticon.com/512/815/815571.png" alt="Brawl Stars"> Brawl Stars
                 </div>
                 <div class="category-chip" onclick="selectCategory('Genshin Impact', this)">
-                    <img src="https://cdn-icons-png.flaticon.com/512/3408/3408506.png" alt="icon"> Genshin Impact
+                    <img src="https://cdn-icons-png.flaticon.com/512/3408/3408506.png" alt="Genshin Impact"> Genshin Impact
                 </div>
                 <div class="category-chip" onclick="selectCategory('Roblox', this)">
-                    <img src="https://cdn-icons-png.flaticon.com/512/10662/10662312.png" alt="icon"> Roblox
+                    <img src="https://cdn-icons-png.flaticon.com/512/10662/10662312.png" alt="Roblox"> Roblox
                 </div>
                 <div class="category-chip" onclick="selectCategory('Steam', this)">
-                    <img src="https://cdn-icons-png.flaticon.com/512/226/226777.png" alt="icon"> Steam (Кошелёк)
+                    <img src="https://cdn-icons-png.flaticon.com/512/226/226777.png" alt="Steam"> Steam (Кошелёк)
                 </div>
                 <div class="category-chip" onclick="selectCategory('Valorant', this)">
-                    <img src="https://cdn-icons-png.flaticon.com/512/6125/6125014.png" alt="icon"> Valorant
+                    <img src="https://cdn-icons-png.flaticon.com/512/6125/6125014.png" alt="Valorant"> Valorant
                 </div>
             </div>
 
@@ -692,6 +692,20 @@
     </div>
 
     <script>
+        // Функция защиты от XSS (очистка ввода для GitHub CodeQL)
+        function escapeHTML(str) {
+            if (!str) return '';
+            return String(str).replace(/[&<>'"]/g, function(match) {
+                return {
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    "'": '&#39;',
+                    '"': '&quot;'
+                }[match];
+            });
+        }
+
         const products = [
             { id: 1, name: "Brawl Pass Plus", category: "Brawl Stars", price: 599, icon: "https://cdn-icons-png.flaticon.com/512/815/815571.png", desc: "Официальный Brawl Pass Plus с мгновенной доставкой по тегу игрока." },
             { id: 2, name: "170 Гемов Brawl Stars", category: "Brawl Stars", price: 349, icon: "https://cdn-icons-png.flaticon.com/512/815/815571.png", desc: "Набор кристалов для покупки скинов и ящиков." },
@@ -752,8 +766,10 @@
             document.getElementById(`tab-${tabId}`).classList.remove('hidden');
             
             document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
-            if(event && event.currentTarget && event.currentTarget.classList.contains('nav-link')) {
-                event.currentTarget.classList.add('active');
+            
+            const e = window.event;
+            if(e && e.currentTarget && e.currentTarget.classList && e.currentTarget.classList.contains('nav-link')) {
+                e.currentTarget.classList.add('active');
             }
             
             if(tabId === 'profile' && !currentUser) {
@@ -765,7 +781,7 @@
             const panel = document.getElementById('user-panel');
             if (currentUser) {
                 panel.innerHTML = `
-                    <button class="btn btn-outline" onclick="switchTab('profile')">👤 Кабинет (${currentUser.balance} ₽)</button>
+                    <button class="btn btn-outline" onclick="switchTab('profile')">👤 Кабинет (${escapeHTML(currentUser.balance)} ₽)</button>
                 `;
             } else {
                 panel.innerHTML = `
@@ -787,11 +803,11 @@
                 grid.innerHTML += `
                     <div class="product-card">
                         <div class="product-img">
-                            <img src="${p.icon}" alt="icon" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2636/2636428.png'">
+                            <img src="${p.icon}" alt="${escapeHTML(p.name)}" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2636/2636428.png'">
                         </div>
                         <div class="product-content">
-                            <span class="product-category">${p.category}</span>
-                            <div class="product-title">${p.name}</div>
+                            <span class="product-category">${escapeHTML(p.category)}</span>
+                            <div class="product-title">${escapeHTML(p.name)}</div>
                             <div class="product-price">${p.price} ₽</div>
                             <button class="btn" onclick="openProductModal(${p.id})">Подробнее</button>
                         </div>
@@ -808,11 +824,11 @@
                 container.innerHTML += `
                     <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1rem;">
                         <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; flex-wrap: wrap;">
-                            <strong>${rev.name} <span class="verified-badge"></span></strong>
-                            <span style="color: var(--text-muted); font-size: 0.85rem;">${rev.date}</span>
+                            <strong>${escapeHTML(rev.name)} <span class="verified-badge"></span></strong>
+                            <span style="color: var(--text-muted); font-size: 0.85rem;">${escapeHTML(rev.date)}</span>
                         </div>
                         <div style="margin-bottom: 0.5rem; font-size: 0.9rem;">${stars}</div>
-                        <p style="color: var(--text); font-size: 0.95rem;">${rev.text}</p>
+                        <p style="color: var(--text); font-size: 0.95rem;">${escapeHTML(rev.text)}</p>
                     </div>
                 `;
             });
@@ -854,8 +870,8 @@
                     let stars = '⭐'.repeat(r.rating);
                     pReviewsHTML += `
                         <div style="font-size: 0.85rem; border-bottom: 1px solid var(--border); padding-bottom: 0.4rem; margin-bottom: 0.4rem;">
-                            <div>${stars} <strong>${r.name}</strong> <span style="float: right; color: var(--text-muted);">${r.date}</span></div>
-                            <div style="color: var(--text);">${r.text}</div>
+                            <div>${stars} <strong>${escapeHTML(r.name)}</strong> <span style="float: right; color: var(--text-muted);">${escapeHTML(r.date)}</span></div>
+                            <div style="color: var(--text);">${escapeHTML(r.text)}</div>
                         </div>
                     `;
                 });
@@ -863,10 +879,10 @@
 
             container.innerHTML = `
                 <div style="font-size: 3rem; text-align: center; margin-bottom: 1rem;">
-                    <img src="${product.icon}" width="60" height="60" style="object-fit: contain;">
+                    <img src="${product.icon}" width="60" height="60" style="object-fit: contain;" alt="${escapeHTML(product.name)}">
                 </div>
-                <span class="product-category">${product.category}</span>
-                <h2>${product.name}</h2>
+                <span class="product-category">${escapeHTML(product.category)}</span>
+                <h2>${escapeHTML(product.name)}</h2>
                 <div style="background: var(--bg); padding: 0.75rem 1rem; border-radius: 0.5rem; margin: 1rem 0; display: flex; justify-content: space-between; align-items: center;">
                     <div>
                         <span style="font-size: 0.85rem; color: var(--text-muted); display: block;">Продавец</span>
@@ -877,7 +893,7 @@
                         <span style="color: #f59e0b;">⭐⭐⭐⭐⭐ (5.0)</span>
                     </div>
                 </div>
-                <p style="color: var(--text-muted); margin: 1rem 0;">${product.desc}</p>
+                <p style="color: var(--text-muted); margin: 1rem 0;">${escapeHTML(product.desc)}</p>
                 <div class="form-group">
                     <label>Игровой ID / Никнейм / Данные</label>
                     <input type="text" id="game-credentials" placeholder="Например: #8Y2PL9Q">
@@ -936,8 +952,8 @@
                 container.innerHTML += `
                     <div class="cart-item">
                         <div>
-                            <strong>${item.name}</strong><br>
-                            <small style="color: var(--text-muted);">Данные: ${item.credentials}</small>
+                            <strong>${escapeHTML(item.name)}</strong><br>
+                            <small style="color: var(--text-muted);">Данные: ${escapeHTML(item.credentials)}</small>
                         </div>
                         <div style="display: flex; align-items: center; gap: 1rem;">
                             <span>${item.price} ₽</span>
@@ -982,117 +998,159 @@
                     <div class="gateway-container gateway-paymo">
                         <h3 style="color: #3b82f6; margin-bottom: 0.5rem;">PayMo Secure Checkout</h3>
                         <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Безопасный платежный шлюз по банковским картам РФ и СБП.</p>
-                        <div class="form-group"><label>Номер карты</label><input type="text" placeholder="0000 0000 0000 0000" maxlength="19"></div>
-                        <div style="display: flex; gap: 0.5rem;">
-                            <div class="form-group" style="flex:1"><label>ММ/ГГ</label><input type="text" placeholder="MM/YY" maxlength="5"></div>
-                            <div class="form-group" style="flex:1"><label>CVC / CVV</label><input type="password" placeholder="123" maxlength="3"></div>
+                        <div class="form-group"><label>Номер карты</label><input type="text" placeholder="0000 0000 0000 0000"></div>
+                        <div style="display: flex; gap: 1rem;">
+                            <div class="form-group" style="flex: 1;"><label>ММ/ГГ</label><input type="text" placeholder="12/28"></div>
+                            <div class="form-group" style="flex: 1;"><label>CVC</label><input type="password" placeholder="***"></div>
                         </div>
-                        <button class="btn" style="width: 100%; background: #3b82f6; margin-top: 1rem;" onclick="processPayment(${total})">Оплатить ${total} ₽ через PayMo</button>
+                        <button class="btn" style="width: 100%; background: #3b82f6; margin-top: 1rem;" onclick="processPayment()">Оплатить ${total} ₽ через PayMo</button>
                     </div>
                 `;
-            } else if(gatewayName === 'cryptopay') {
+            } else if (gatewayName === 'cryptopay') {
                 container.innerHTML = `
                     <div class="gateway-container gateway-cryptopay">
-                        <h3 style="color: #f59e0b; margin-bottom: 0.5rem;">CryptoVault Terminal</h3>
-                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Быстрая оплата в криптовалюте (USDT, TON, BTC).</p>
-                        <div class="form-group">
-                            <label>Выберите сеть</label>
-                            <select><option>USDT (TRC-20)</option><option>TON (The Open Network)</option><option>Bitcoin (BTC)</option></select>
+                        <h3 style="color: #f59e0b; margin-bottom: 0.5rem;">CryptoVault Direct</h3>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Анонимная оплата стейблкоинами (USDT TRC20, TON).</p>
+                        <div style="background: var(--bg); padding: 1rem; border-radius: 0.5rem; text-align: center; margin-bottom: 1rem;">
+                            <img src="https://cdn-icons-png.flaticon.com/512/3596/3596091.png" width="80" style="margin-bottom: 0.5rem;" alt="QR">
+                            <div style="font-size: 0.8rem; word-break: break-all; color: var(--accent);">TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t</div>
                         </div>
-                        <div style="background: #0f172a; padding: 0.75rem; border-radius: 0.5rem; text-align: center; margin-bottom: 1rem; font-size: 0.85rem; color: #f59e0b;">
-                            Сумма к переводу: <strong>~${(total/90).toFixed(2)} USDT</strong>
-                        </div>
-                        <button class="btn" style="width: 100%; background: #f59e0b; color: #000;" onclick="processPayment(${total})">Сгенерировать адрес и оплатить</button>
+                        <button class="btn" style="width: 100%; background: #f59e0b; margin-top: 1rem;" onclick="processPayment()">Я перевел средства</button>
                     </div>
                 `;
-            } else if(gatewayName === 'fastpay') {
+            } else if (gatewayName === 'fastpay') {
                 container.innerHTML = `
                     <div class="gateway-container gateway-fastpay">
-                        <h3 style="color: #10b981; margin-bottom: 0.5rem;">FastPay Express One-Click</h3>
-                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Оплата со счета кошелька ELIS или мобильных операторов.</p>
-                        <div class="form-group"><label>Номер телефона / Кошелька</label><input type="text" placeholder="+7 (999) 000-00-00"></div>
-                        <button class="btn" style="width: 100%; background: #10b981;" onclick="processPayment(${total})">Подтвердить быструю оплату (${total} ₽)</button>
+                        <h3 style="color: #10b981; margin-bottom: 0.5rem;">FastPay Express (Электронные кошельки)</h3>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Оплата через ЮMoney, Qiwi, и мобильных операторов.</p>
+                        <div class="form-group"><label>Выберите систему</label><select><option>ЮMoney</option><option>МТС / Билайн</option></select></div>
+                        <div class="form-group"><label>Номер телефона или кошелька</label><input type="text" placeholder="+7 (999) 000-00-00"></div>
+                        <button class="btn" style="width: 100%; background: #10b981; margin-top: 1rem;" onclick="processPayment()">Продолжить оплату ${total} ₽</button>
                     </div>
                 `;
             }
         }
 
-        function processPayment(total) {
-            if(!currentUser) {
-                closeModal('payment-gateway-modal');
-                openAuthModal();
-                alert('Необходимо войти в аккаунт для завершения покупки!');
-                return;
-            }
+        function processPayment() {
+            closeModal('payment-gateway-modal');
+            
+            const randArr = new Uint32Array(1);
+            window.crypto.getRandomValues(randArr);
 
             const newOrder = {
-                id: Math.floor(100000 + Math.random() * 900000),
-                date: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                id: 100000 + (randArr[0] % 900000),
                 items: [...cart],
-                total: total,
-                confirmed: false // Требуется подтверждение пользователем
+                status: 'В обработке',
+                date: new Date().toLocaleDateString('ru-RU')
             };
 
-            orders.unshift(newOrder);
+            orders.push(newOrder);
             localStorage.setItem('elis_orders', JSON.stringify(orders));
 
             cart = [];
             saveCart();
             updateCartCount();
-            closeModal('payment-gateway-modal');
-            renderUserPanel();
-            renderOrders();
 
+            document.getElementById('success-modal-text').innerHTML = `Заказ <strong>#${newOrder.id}</strong> принят в работу.<br>Перейдите в «Мои заказы» для подтверждения и отзыва.`;
             document.getElementById('order-success-modal').classList.add('active');
+            renderOrders();
         }
 
-        function confirmOrderDelivery(orderIndex) {
-            orders[orderIndex].confirmed = true;
+        function renderOrders() {
+            const container = document.getElementById('orders-container');
+            container.innerHTML = '';
+            
+            if(orders.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-muted);">У вас пока нет заказов.</p>';
+                return;
+            }
+
+            // Рендерим заказы (новые сверху)
+            [...orders].reverse().forEach((order, rIndex) => {
+                const index = orders.length - 1 - rIndex;
+                let itemsHtml = '';
+                order.items.forEach(i => {
+                    itemsHtml += `<div style="font-size: 0.9rem; margin-top: 0.25rem;">• <strong>${escapeHTML(i.name)}</strong> (Данные: ${escapeHTML(i.credentials)})</div>`;
+                });
+
+                let statusBadge = '';
+                let actionBtn = '';
+                if(order.status === 'Выполнен') {
+                    statusBadge = `<span class="badge" style="background: rgba(16, 185, 129, 0.2); color: var(--accent);">✅ Выполнен</span>`;
+                } else {
+                    statusBadge = `<span class="badge" style="background: rgba(245, 158, 11, 0.2); color: #f59e0b;">⏳ Ожидает подтверждения</span>`;
+                    actionBtn = `<button class="btn btn-outline" style="margin-top: 1rem; width: 100%; border-color: var(--accent); color: var(--accent);" onclick="confirmOrder(${index})">✅ Подтвердить выполнение заказа</button>`;
+                }
+
+                container.innerHTML += `
+                    <div style="background: var(--surface); border: 1px solid var(--border); padding: 1.25rem; border-radius: 0.75rem; margin-bottom: 1rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                            <strong>Заказ #${escapeHTML(order.id)}</strong>
+                            ${statusBadge}
+                        </div>
+                        <div style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 0.75rem;">${escapeHTML(order.date)}</div>
+                        <div style="background: var(--bg); padding: 0.75rem; border-radius: 0.5rem;">
+                            ${itemsHtml}
+                        </div>
+                        ${actionBtn}
+                    </div>
+                `;
+            });
+        }
+
+        function confirmOrder(index) {
+            orders[index].status = 'Выполнен';
             localStorage.setItem('elis_orders', JSON.stringify(orders));
             renderOrders();
-            alert('Заказ подтвержден!');
+
+            // Предлагаем оставить отзыв для первого товара в заказе (для простоты)
+            const item = orders[index].items[0];
+            if(item) {
+                openOrderReviewModal(item.id, index);
+            } else {
+                alert('Заказ подтвержден!');
+            }
         }
 
-        function openOrderReviewModal(orderIndex, itemId) {
-            document.getElementById('order-review-order-index').value = orderIndex;
+        function openOrderReviewModal(itemId, orderIndex) {
             document.getElementById('order-review-item-id').value = itemId;
+            document.getElementById('order-review-order-index').value = orderIndex;
             document.getElementById('order-review-text').value = '';
             document.getElementById('order-review-modal').classList.add('active');
         }
 
         function submitOrderReview() {
-            const orderIndex = parseInt(document.getElementById('order-review-order-index').value);
             const itemId = parseInt(document.getElementById('order-review-item-id').value);
             const rating = parseInt(document.getElementById('order-review-rating').value);
             const text = document.getElementById('order-review-text').value.trim();
+            const author = currentUser ? currentUser.email.split('@')[0] : "Покупатель";
 
             if(!text) {
-                alert('Введите текст отзыва!');
+                alert("Пожалуйста, напишите текст отзыва");
                 return;
             }
 
-            const author = currentUser ? currentUser.email.split('@')[0] : 'Покупатель';
-            const dateStr = new Date().toLocaleDateString();
+            const newReview = {
+                name: author,
+                rating: rating,
+                text: text,
+                date: new Date().toLocaleDateString('ru-RU')
+            };
 
-            // Сохраняем в отзывы конкретного товара
+            // Добавляем в отзывы конкретного товара
             if(!productReviews[itemId]) {
                 productReviews[itemId] = [];
             }
-            productReviews[itemId].unshift({ name: author, rating, text, date: dateStr });
+            productReviews[itemId].unshift(newReview);
             localStorage.setItem('elis_product_reviews', JSON.stringify(productReviews));
 
-            // Также добавляем в общий список отзывов
-            reviews.unshift({ name: author, rating, text, date: dateStr });
+            // Добавляем в общие отзывы магазина
+            reviews.unshift(newReview);
             localStorage.setItem('elis_reviews', JSON.stringify(reviews));
 
-            // Помечаем в заказе, что отзыв оставлен
-            orders[orderIndex].reviewed = true;
-            localStorage.setItem('elis_orders', JSON.stringify(orders));
-
-            closeModal('order-review-modal');
-            renderOrders();
             renderReviews();
-            alert('Спасибо! Ваш отзыв успешно добавлен на страницу товара.');
+            closeModal('order-review-modal');
+            alert('Спасибо за ваш отзыв! Он уже опубликован на странице товара.');
         }
 
         function openReviewModal() {
@@ -1100,124 +1158,92 @@
         }
 
         function submitReview() {
-            const name = document.getElementById('review-name').value.trim();
-            const rating = parseInt(document.getElementById('review-rating').value);
+            let name = document.getElementById('review-name').value.trim();
             const text = document.getElementById('review-text').value.trim();
+            const rating = parseInt(document.getElementById('review-rating').value);
 
-            if(!name || !text) {
-                alert('Заполните имя и текст отзыва!');
+            if(!name) name = "Аноним";
+            if(!text) {
+                alert('Введите текст отзыва');
                 return;
             }
 
-            reviews.unshift({ name, rating, text, date: new Date().toLocaleDateString() });
+            reviews.unshift({ name, rating, text, date: new Date().toLocaleDateString('ru-RU') });
             localStorage.setItem('elis_reviews', JSON.stringify(reviews));
-            closeModal('review-modal');
             renderReviews();
-            alert('Спасибо за ваш отзыв!');
+            closeModal('review-modal');
+            
+            document.getElementById('review-name').value = '';
+            document.getElementById('review-text').value = '';
         }
 
-        function renderOrders() {
-            const container = document.getElementById('orders-container');
-            container.innerHTML = '';
-
-            if(orders.length === 0) {
-                container.innerHTML = '<p style="color: var(--text-muted);">У вас пока нет заказов.</p>';
-                return;
-            }
-
-            orders.forEach((order, orderIndex) => {
-                let itemsHtml = '';
-                order.items.forEach(i => {
-                    itemsHtml += `<div style="font-size: 0.9rem; margin-top: 0.25rem;">• <strong>${i.name}</strong> (Данные: ${i.credentials})</div>`;
-                });
-
-                let actionBlock = '';
-                if (!order.confirmed) {
-                    actionBlock = `<button class="btn" style="background: var(--accent); font-size: 0.85rem; padding: 0.4rem 0.8rem;" onclick="confirmOrderDelivery(${orderIndex})">Подтвердить получение</button>`;
-                } else {
-                    if (!order.reviewed) {
-                        let firstItemId = order.items[0] ? order.items[0].id : 1;
-                        actionBlock = `
-                            <span class="badge" style="background: rgba(16, 185, 129, 0.2); color: var(--accent);">✅ Доставлен и подтвержден</span>
-                            <button class="btn btn-outline" style="font-size: 0.85rem; padding: 0.4rem 0.8rem; margin-left: 0.5rem;" onclick="openOrderReviewModal(${orderIndex}, ${firstItemId})">Написать отзыв</button>
-                        `;
-                    } else {
-                        actionBlock = `<span class="badge" style="background: rgba(16, 185, 129, 0.2); color: var(--accent);">✅ Доставлен • Отзыв оставлен</span>`;
-                    }
-                }
-
-                container.innerHTML += `
-                    <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1rem;">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; flex-wrap: wrap;">
-                            <strong>Заказ #${order.id}</strong>
-                            <span style="color: var(--text-muted); font-size: 0.85rem;">${order.date}</span>
-                        </div>
-                        <div style="margin-bottom: 1rem;">
-                            ${itemsHtml}
-                        </div>
-                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
-                            <strong style="color: var(--accent); font-size: 1.1rem;">${order.total} ₽</strong>
-                            <div>${actionBlock}</div>
-                        </div>
-                    </div>
-                `;
-            });
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
         }
 
+        /* АВТОРИЗАЦИЯ */
         function openAuthModal() {
             document.getElementById('auth-modal').classList.add('active');
+            isRegistering = false;
+            document.getElementById('auth-title').innerText = 'Вход в Elis shop';
+            document.getElementById('auth-switch-text').innerText = 'Нет аккаунта? Зарегистрироваться';
             document.getElementById('auth-step-1').classList.remove('hidden');
             document.getElementById('auth-step-2').classList.add('hidden');
-            document.getElementById('auth-alert').classList.add('hidden');
+            hideAuthAlert();
         }
 
         function toggleAuthMode() {
             isRegistering = !isRegistering;
-            document.getElementById('auth-title').innerText = isRegistering ? 'Регистрация в Elis shop' : 'Вход в Elis shop';
+            document.getElementById('auth-title').innerText = isRegistering ? 'Регистрация' : 'Вход в Elis shop';
             document.getElementById('auth-switch-text').innerText = isRegistering ? 'Уже есть аккаунт? Войти' : 'Нет аккаунта? Зарегистрироваться';
+            hideAuthAlert();
         }
 
         function handleAuthSubmit() {
             const email = document.getElementById('auth-email').value.trim();
             const password = document.getElementById('auth-password').value.trim();
-            const alertBox = document.getElementById('auth-alert');
 
             if(!email || !password) {
-                showAlert(alertBox, 'Заполните все поля!', 'error');
+                showAuthAlert('Заполните все поля', 'error');
                 return;
             }
 
             if(isRegistering) {
-                generatedVerificationCode = Math.floor(1000 + Math.random() * 9000).toString();
+                const randArr = new Uint32Array(1);
+                window.crypto.getRandomValues(randArr);
+                generatedVerificationCode = (1000 + (randArr[0] % 9000)).toString();
+                
+                tempUserData = { email, password, balance: 0 };
                 document.getElementById('displayed-code').innerText = generatedVerificationCode;
-                tempUserData = { email, password, balance: 500 };
-
                 document.getElementById('auth-step-1').classList.add('hidden');
                 document.getElementById('auth-step-2').classList.remove('hidden');
+                hideAuthAlert();
             } else {
-                currentUser = { email, balance: 500 };
-                localStorage.setItem('elis_user', JSON.stringify(currentUser));
-                finalizeLogin();
+                let existingUser = JSON.parse(localStorage.getItem('elis_user_db_' + email));
+                if(existingUser && existingUser.password === password) {
+                    login(existingUser);
+                } else {
+                    showAuthAlert('Неверный логин или пароль', 'error');
+                }
             }
         }
 
         function verifyCodeAndRegister() {
-            const enteredCode = document.getElementById('auth-code-input').value.trim();
-            if(enteredCode === generatedVerificationCode) {
-                currentUser = tempUserData;
-                localStorage.setItem('elis_user', JSON.stringify(currentUser));
-                finalizeLogin();
+            const code = document.getElementById('auth-code-input').value.trim();
+            if(code === generatedVerificationCode) {
+                localStorage.setItem('elis_user_db_' + tempUserData.email, JSON.stringify(tempUserData));
+                login(tempUserData);
             } else {
-                alert('Неверный код подтверждения!');
+                alert('Неверный код!');
             }
         }
 
-        function finalizeLogin() {
+        function login(userData) {
+            currentUser = userData;
+            localStorage.setItem('elis_user', JSON.stringify(currentUser));
             closeModal('auth-modal');
             renderUserPanel();
-            document.getElementById('profile-email').value = currentUser.email;
-            document.getElementById('profile-balance').innerText = currentUser.balance + ' ₽';
-            alert('Успешный вход в аккаунт!');
+            updateProfileTab();
         }
 
         function logout() {
@@ -1225,28 +1251,42 @@
             localStorage.removeItem('elis_user');
             renderUserPanel();
             switchTab('catalog');
-            alert('Вы вышли из аккаунта.');
+        }
+
+        function showAuthAlert(msg, type) {
+            const alertBox = document.getElementById('auth-alert');
+            alertBox.innerText = msg;
+            alertBox.className = `alert alert-${type}`;
+            alertBox.classList.remove('hidden');
+        }
+
+        function hideAuthAlert() {
+            document.getElementById('auth-alert').classList.add('hidden');
+        }
+
+        function updateProfileTab() {
+            if(currentUser) {
+                document.getElementById('profile-email').value = currentUser.email;
+                document.getElementById('profile-balance').innerText = currentUser.balance + ' ₽';
+            }
         }
 
         function topUpBalance() {
             if(currentUser) {
                 currentUser.balance += 1000;
                 localStorage.setItem('elis_user', JSON.stringify(currentUser));
-                document.getElementById('profile-balance').innerText = currentUser.balance + ' ₽';
+                localStorage.setItem('elis_user_db_' + currentUser.email, JSON.stringify(currentUser));
+                updateProfileTab();
                 renderUserPanel();
-                alert('Баланс успешно пополнен на 1000 ₽!');
+                alert('Баланс успешно пополнен на 1000 ₽ (демо)!');
             }
         }
 
-        function showAlert(element, text, type) {
-            element.innerText = text;
-            element.className = `alert alert-${type}`;
-            element.classList.remove('hidden');
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('active');
-        }
+        setInterval(() => {
+            if(currentUser && document.getElementById('tab-profile').classList.contains('hidden') === false) {
+                updateProfileTab();
+            }
+        }, 1000);
     </script>
 </body>
 </html>
